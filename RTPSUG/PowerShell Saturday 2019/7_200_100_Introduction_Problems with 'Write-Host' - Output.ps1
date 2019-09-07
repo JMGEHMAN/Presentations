@@ -1,0 +1,1 @@
+return 'This file is for interactive demo purposes and should not be executed as a script'

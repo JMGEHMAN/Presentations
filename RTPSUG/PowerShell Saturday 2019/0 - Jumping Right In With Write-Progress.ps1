@@ -1,3 +1,4 @@
+return 'This file is for interactive demo purposes and should not be executed as a script'
 #Write-Progress is great for providing status updates during long-running operations...like a presentation
 #Looping through a list of actions and providing progress output
 
@@ -15,7 +16,7 @@ for ($i = 1; $i -le $max; $i++) {
         SecondsRemaining = $max - $i
     }
 
-    Write-Progress @progressParams 
+    Write-Progress @progressParams
     Start-Sleep -Seconds 1
 }
 
@@ -50,7 +51,7 @@ for ($i = 1; $i -le $max; $i++) {
         SecondsRemaining = $max - $i
     }
 
-    Write-Progress @progressParams 
+    Write-Progress @progressParams
     Start-Sleep -Seconds 1
 }
 
