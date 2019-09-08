@@ -13,7 +13,6 @@ for ($i = 1; $i -le $max; $i++) {
         Status           = "$i of $max ($($percentComplete)%)"
         PercentComplete  = $percentComplete
         CurrentOperation = 'CurrentOperation Description Here'
-        SecondsRemaining = $max - $i
     }
 
     Write-Progress @progressParams
@@ -58,16 +57,17 @@ for ($i = 1; $i -le $max; $i++) {
 #<----- Using 'Write-Progress' to run a presentation ----->
 #   * All files named "<Presentation Order>_<Progress ID>_<Parent ID(optional)>_<Activity/Chapter Title>_<CurrentOperation/Topic>.ps1"
 
-$presentationFiles = Get-ChildItem -Path .\*_*_*.ps1 | Sort-Object
+$presentationFiles = Get-ChildItem -Path .\*_*.ps1 | Sort-Object
 $i = 0
 
 foreach ($file in $presentationFiles) {
-    $splitFileName = $file.name -split '_'
+    $splitFileName = $file.BaseName -split '_'
     $i++
 
     ise $file.fullName
+    code $file.fullName
 
-    #File is a child
+<#    #File is a child
     if ($splitFileName[2] -as [int]) {
         $childFiles = Get-ChildItem -Path ".\*_*_$($splitFileName[2])_*.ps1" | Sort-Object
         $childPercentComplete = [math]::Ceiling($childFiles.IndexOf(($childFiles | where name -eq $file.Name)) + 1 / $childFiles.Count * 100)
@@ -82,6 +82,7 @@ foreach ($file in $presentationFiles) {
         }
 
     } else {
+
         $PercentComplete = [math]::Ceiling($i / $presentationFiles.Count * 100)
         $progressParams = @{
             id               = $splitFileName[0, 1] -join ''
@@ -90,13 +91,20 @@ foreach ($file in $presentationFiles) {
             Status           = "$i/$($presentationFiles.count) ($($percentComplete)%)"
             PercentComplete  = $percentComplete
         }
-
+#>
+    $PercentComplete = [math]::Ceiling($i / $presentationFiles.Count * 100)
+    
+    $progressParams = @{
+        Activity         = $splitFileName[1]
+        CurrentOperation = $splitFileName[2]
+        Status           = "$i of $($presentationFiles.count) ($($percentComplete)%)"
+        PercentComplete  = $percentComplete
+        SecondsRemaining = 60*45*($presentationFiles.Count-$i)/$presentationFiles.Count
     }
 
     Write-Progress @progressParams
 
     do {
         Start-Sleep -Seconds 2
-    } until ($psise.PowerShellTabs.Files.DisplayName -notcontains $file.Name)
-
+    } until (-Not ($psise.PowerShellTabs.Files | Where DisplayName -match $file.Name))
 }
