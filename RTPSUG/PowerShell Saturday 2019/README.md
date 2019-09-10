@@ -33,6 +33,16 @@ Write-Warning
 
 ```
 
+| Stream # | Description | Introduced in | Preference Variable | Default Value | Common Parameter |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Success Stream | PowerShell 2.0 | | | |
+| 2 | Error Stream | PowerShell 2.0 | ErrorActionPreference | Continue | ErrorAction
+| 3 | Warning Stream | PowerShell 3.0 | WarningPreference | Continue | WarningAction
+| 4 | Verbose Stream | PowerShell 3.0 | VerbosePreference | SilentlyContinue | Verbose
+| 5 | Debug Stream | PowerShell 3.0 | DebugPreference | SilentlyContinue | Debug
+| 6 | Information Stream | PowerShell 5.0 | InformationPreference | SilentlyContinue | InformationAction 
+| * | All Streams | PowerShell 3.0 | | | |
+
 ## Other Resources
 
 * [Understanding Streams, Redirection, and Write-Host in PowerShell](https://devblogs.microsoft.com/scripting/understanding-streams-redirection-and-write-host-in-powershell/)

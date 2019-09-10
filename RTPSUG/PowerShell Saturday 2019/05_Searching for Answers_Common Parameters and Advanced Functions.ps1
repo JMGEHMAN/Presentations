@@ -16,18 +16,21 @@ Get-Help about_Functions_Advanced -ShowWindow
 ### From ISE's 'Function' template
 function Write-Hello ([string[]]$Name = $env:USERNAME) {
     foreach ($item in $Name) {
-        Write-Warning -Message "Warning, $Name."
-        Write-Debug -Message "Debug, $Name"
-        Write-Verbose -Message "Verbose, $Name"
-        Write-Information -MessageData "Information, $Name"
+        Write-Warning -Message "WRITE-WARNING: Warning, $Name."
+        Write-Debug -Message "WRITE-DEBUG: Debug, $Name"
+        Write-Verbose -Message "WRITE-VERBOSE: Verbose, $Name"
+        Write-Information -MessageData "WRITE-INFORMATION: Information, $Name"
 
-        "Hello, $Name"
+        Write-Host 'WRITE-HOST: example message'
+        Write-Output 'WRITE-OUTPUT: Example message'
+
+        "Hello, $item"
     }
 }
 
 ### From ISE's 'Cmdlet (advanced function)' template - equivalent VS Code snippet named "Function-advanced"
 #### Gives us some extra goodies that are worth a look
-function Write-AdvnancedHello {
+function Write-AdvancedHello {
     [CmdletBinding()]   #<--- This is the change we care about
     [Alias('wah')]
     [OutputType([string])]
@@ -39,45 +42,56 @@ function Write-AdvnancedHello {
     )
               
     Begin {
-        Write-Information -MessageData "Beginning, $name"
-
+        Write-Information -MessageData "WRITE-INFORMATION: Beginning - Name = $name"
     }
+
     Process {
         foreach ($item in $name) {
-            Write-Warning -Message "Warning, $item."
-            Write-Debug -Message "Debug, $item"
-            Write-Verbose -Message "Verbose, $item"
+            if ($item -eq $env:USERNAME) {
+                Write-Warning -Message "WRITE-WARNING: Default value used to populate '$item'." 
+
+            } elseif ($item -eq 'PSSaturday') {
+                Write-Error -Message "WRITE-ERROR: '$item' is right out!"
+                break
+            } 
+            Write-Debug -Message "WRITE-DEBUG: Not sure if '$item' is the correct value for 'item'."
+            Write-Verbose -Message "WRITE-VERBOSE: We're using '$item'"
 
             "Hello, $item"
         }
     }
 
     End {
-        Write-Information -MessageData "Beginning, $name"
+        Write-Information -MessageData "WRITE-INFORMATION: End - Name = $name"
     }
 }
-
-## Comparing Help documentation
-Get-Help Write-Hello -ShowWindow
-Get-Help Write-AdvnancedHello -ShowWindow
-
+           
 ## Using Common Parameters Debug and Verbose
+### No effect on our basic function
 Write-Hello -Verbose -Debug
-Write-AdvnancedHello -Verbose -Debug
 
-## We FINALLY have the Common Parameters we were looking for
-Write-AdvnancedHello -Name 'Test' -Verbose
-Write-AdvnancedHello -Debug
+### But does effect our advanced function
+Write-AdvancedHello -Verbose -Debug
+
+## We FINALLY have the Common Parameters we were looking for!
+### Toggling different messages/actions using Common Parameters
+Write-AdvancedHello -Name 'Test' -Verbose
+Write-AdvancedHello -Debug
 
 ## Unrelated, but since we're here - you definately need to look into this more
 ### "[Parameter(ValueFromPipelineByPropertyName = $true)] let's us to this...
-'Aaron', 'Abigail', 'Adam' | Write-AdvnancedHello
+'Aaron', 'Abigail', 'Adam' | Write-AdvancedHello
 
 # If you take one thing away from this presentation:
-## Put your code in functions, always use [CmdletBinding()]
+## Use [CmdletBinding()] always
 
-#Advanced functions/[CmdletBinding[]] opens many possibilities, but lets stick with the topic at hand.
+# Advanced functions/[CmdletBinding[]] opens many possibilities, but lets stick with the topic at hand.
+## Yay for Common Parameters I can toggle Verbose and Debug, but why are Warning messages always showing and Informational messages are not?
 
+
+
+
+#<----- Don't have to go home, but can't stay here. Delete or move eventually ----->
 function Get-ISEFileItem([string[]]$ItemPath = ((Get-Location).Path), [switch]$Recusive) {
     Write-Verbose -Message "Start Get-ISEFileItem: $(Get-Date)."
     

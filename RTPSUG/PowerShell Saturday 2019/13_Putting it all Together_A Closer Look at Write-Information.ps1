@@ -1,104 +1,85 @@
 return 'This file is for interactive demo purposes and should not be executed as a script'
 
-# PowerShell Streams and Using the right "Write-*" Cmdlet
+# Write-Information, and the Information Stream are the relative new kid on the block
+## Why was it created?
+## What can it do for us?
 
-## The Problem (#1)
+## Finally, online redirection works
+Get-Help Write-Information -Online
 
-### Write-Host is great...
-#### Write the rainbow
-for ($i = 0; $i -lt 10000; $i++) {
-    $fColor = [enum]::GetValues([System.ConsoleColor]) | Get-Random
-    $bColor = [enum]::GetValues([System.ConsoleColor]) | Get-Random
+## Testing Information action
+Write-Information -MessageData 'Test informational message'
+Write-Information -MessageData 'Test informational message' -InformationAction 'Continue'
+Write-Information -MessageData 'Test informational message' -InformationAction 'Stop'
 
-    #Let's display all the pretty colors!
-    Write-Host -ForegroundColor $fColor -BackgroundColor $bColor -Object 'PowerShell is Awesome!'
-}
+## Testing tags
+Write-Information -MessageData 'Test informational message' -Tags 'Default'
+Write-Information -MessageData 'Test informational message' -InformationAction 'Continue' -Tags 'Continue'
+Write-Information -MessageData 'Test informational message' -InformationAction 'Stop' -Tags 'Stop'
 
-#### Using Write-Host to mimic Verbose, Error, and Informational output
-function Get-RandomFromInput {
-    $validMax = 100
+## Testing tags to variable
+Write-Information -MessageData "Test informational $InformationPreference message (Default)." -Tags 'Default' -InformationVariable infoDefaultMessage
+Write-Information -MessageData "Test informational $InformationPreference message (Continue)" -InformationAction 'Continue' -Tags 'Continue' -InformationVariable infoContinueMessage
+Write-Information -MessageData "Test informational $InformationPreference message (Stop)" -InformationAction 'Stop' -Tags 'Stop' -InformationVariable infoStopMessage
 
-    do {
-        [int]$numberMax = Read-Host -Prompt "Enter a number between 1 and $validMax"
-        $isValidNumber = $numberMax -ge 1 -and $numberMax -le $validMax
+### Messages saved to variable despite InformationAction
+$infoDefaultMessage
+$infoContinueMessage
+$infoStopMessage
 
-        if ($isValidNumber) {
-            Write-Host -ForegroundColor Green "Using numberMax of '$numberMax'."
-        } else {
-            Write-Host -ForegroundColor Red 'Really?!'
+### Messages contain more than just the message
+$infoDefaultMessage | Select-Object *
+$infoContinueMessage | Select-Object *
+$infoStopMessage | Select-Object *
 
+## Testing tags on our advanced function
+function Write-AdvancedHello {
+    [CmdletBinding()]   #<--- This is the change we care about
+    [Alias('wah')]
+    [OutputType([string])]
+
+    Param
+    (
+        [Parameter(ValueFromPipeline = $true)]
+        [string[]]$Name = $env:USERNAME
+    )
+              
+    Begin {
+        Write-Information -MessageData "WRITE-INFORMATION: Beginning - Name = $name" -Tags 'Example', 'Begin'
+    }
+
+    Process {
+        foreach ($item in $name) {
+            if ($item -eq $env:USERNAME) {
+                Write-Warning -Message "WRITE-WARNING: Default value used to populate '$item'." 
+
+            } elseif ($item -eq 'PSSaturday') {
+                Write-Error -Message "WRITE-ERROR: '$item' is right out!"
+                break
+            } 
+            Write-Debug -Message "WRITE-DEBUG: Not sure if '$item' is the correct value for 'item'."
+            Write-Verbose -Message "WRITE-VERBOSE: We're using '$item'"
+
+            Write-Information -MessageData "WRITE-INFORMATION: Process - Name = $name" -Tags 'Example', 'Process'
+            "Hello, $item"
         }
-    }until($isValidNumber)
+    }
 
-    #Spinkle in some debugging output as I try to fix an issue
-    Write-Host -ForegroundColor Cyan "Selecting Random number between '1' and '$numberMax'"
-    1..$numberMax | Get-Random
+    End {
+        Write-Information -MessageData "WRITE-INFORMATION: End - Name = $name" -Tags 'Example', 'End'
+    }
 }
 
+'name1', $env:USERNAME, 'PSSaturday' | Write-AdvancedHello -InformationVariable wahInfo
+$wahInfo
 
-### ...Until it isn't
-for ($i = 0; $i -lt 1000; $i++) {
-    $fColor = [enum]::GetValues([System.ConsoleColor]) | Get-Random
-    $bColor = [enum]::GetValues([System.ConsoleColor]) | Get-Random
+$wahInfo | Select * | Format-Table
 
-    #Let's save our messages to a log file
-    Write-Host -ForegroundColor $fColor -BackgroundColor $bColor -Object 'PowerShell is Awesome!' |
-        Out-File -FilePath .\Output\Write-Host.log
-}
-
-### Where my log at?!
-Get-Content -Path .\Output\Write-Host.log
-
-### Maybe Tee-Object will do the trick?
-for ($i = 0; $i -lt 1000; $i++) {
-    $fColor = [enum]::GetValues([System.ConsoleColor]) | Get-Random
-    $bColor = [enum]::GetValues([System.ConsoleColor]) | Get-Random
-
-    #Let's save our messages to a log file
-    Write-Host -ForegroundColor $fColor -BackgroundColor $bColor -Object 'PowerShell is Awesome!' |
-        Tee-Object -FilePath .\Output\Write-Host.log
-}
-
-#Still no logs
-Get-Content -Path .\Output\Write-Host.log
-
-
-### When Write-Host isn't right
-
-## Introducing the "Write" Family
-
-```powershell
-#Option A
-Get-Command Write-*
-
-#Option B
-Get-Command -Verb Write
-
-#Eliminate the noise - show only the core PowerShell cmdlets
-Get-Command -Verb Write -Module Microsoft.PowerShell.Utility
-```
-
-## Testing each Write cmdlet
-
-```powershell
-Write-Debug -Message 'This is a debug message'
-Write-Error -Message 'This is an error message'
-Write-Host
-Write-Information
-Write-Output
-Write-Progress
-Write-Verbose
-Write-Warning
-
-```
-
-## Other Resources
-
-* [Understanding Streams, Redirection, and Write-Host in PowerShell](https://devblogs.microsoft.com/scripting/understanding-streams-redirection-and-write-host-in-powershell/)
-* [PowerShell Best Practices & Style Guide: Output and Formatting](https://poshcode.gitbooks.io/powershell-practice-and-style/Best-Practices/Output-and-Formatting.html)
-* [about_functions_adanced](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced)
+$wahInfo | Where-Object Tags -contains 'Example'
+$wahInfo | Where-Object Tags -contains 'Begin'
+$wahInfo | Where-Object Tags -contains 'Process'
+$wahInfo | Where-Object Tags -contains 'End'
 
 
 
-
-[console]::beep()
+https://devblogs.microsoft.com/scripting/weekend-scripter-welcome-to-the-powershell-information-stream/

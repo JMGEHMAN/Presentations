@@ -12,7 +12,7 @@ for ($i = 0; $i -lt 10000; $i++) {
     Write-Host -ForegroundColor $fColor -BackgroundColor $bColor -Object 'PowerShell is Awesome!'
 }
 
-### Using Write-Host to mimic Verbose, Error, and Informational output
+### Using Write-Host to replicate Verbose, Error, and Informational output
 function Get-RandomFromInput {
     $validMax = 100
 
@@ -24,7 +24,7 @@ function Get-RandomFromInput {
 
             Write-Host -ForegroundColor Green "SUCCESS: Using numberMax of '$numberMax'."
         } else {
-            #Mimicing a PowerShell error message
+            #Replicate a PowerShell error message
             Write-Host -ForegroundColor Red 'ERROR: Really?!'
 
         }
