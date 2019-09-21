@@ -13,10 +13,13 @@ Write-Debug         $DebugPreference                Stop, Inquire, Continue, (Si
 Write-Information   $InformationActionPreference    Stop, Inquire, Continue, Suspend, (SilentlyContinue)
 #>
 
+## Show all the preference variables
+Get-Variable *Preference
+
 ## Reviewing default behavior for Verbose and Error
 "Verbose Preference: $VerbosePreference"
 "Error Preference:   $ErrorActionPreference"
-Write-AdvancedHello2 -Name 'PSSaturday2'
+Write-AdvancedHello2 -Name 'PSSaturday1', 'PSSaturday2'
 
 ## Changing Verbose preference for the current session
 $VerbosePreference = 'Continue'
@@ -27,7 +30,7 @@ $ErrorActionPreference = 'SilentlyContinue'
 ## Now Verbose is outputted, but Error is not
 "Verbose Preference: $VerbosePreference"
 "Error Preference:   $ErrorActionPreference"
-Write-AdvancedHello2 -Name 'PSSaturday2'
+Write-AdvancedHello2 -Name 'PSSaturday1', 'PSSaturday2'
 
 ## Overriding Error back to default value of 'Continue' for a single command
 Write-AdvancedHello2 -Name 'PSSaturday2' -Verbose -ErrorAction Continue
@@ -36,12 +39,14 @@ Write-AdvancedHello2 -Name 'PSSaturday2' -Verbose -ErrorAction Continue
 $VerbosePreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Continue'
 
+
 # Regardles of preference variable, output can be stored to their own variables
 'PSSaturday', 'PSSaturday2', 'Test Name' | 
-Write-AdvancedHello2 -ErrorVariable wahErrors -WarningVariable wahWarnings -InformationVariable wahInfo
+Write-AdvancedHello2 -ErrorVariable wah2Errors -WarningVariable wah2Warnings -InformationVariable wah2Info
 
 #No Verbose Variable, however...
-$wahErrors
-$wahWarnings
+$wah2Errors
+$wah2Warnings
+
 ## wahInfo populated even though the messages did not get outputted to the console
-$wahInfo
+$wah2Info

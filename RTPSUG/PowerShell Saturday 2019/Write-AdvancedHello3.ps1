@@ -1,4 +1,4 @@
-#This advanced function shows how adding tags to 'Write-Information' commands can help with collecting data
+#This advanced function shows how adding tags to 'Write-Information' commands can help with collecting data, and that Write-Host does not support tagging.
 
 [CmdletBinding()]
 [Alias('wah3')]
@@ -23,6 +23,8 @@ process {
     Write-Verbose -Message "Welcoming $($Name.Count) names"
 
     foreach ($item in $Name) {
+        Write-Host -ForegroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) -BackgroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) "Write-Host: I'm as chill as a cat with a lazer pointer"
+
         #Only show progress bar for larger, time consuming tasks
         if ($name.count -gt 5) {
             $i += 1

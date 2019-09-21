@@ -53,5 +53,8 @@ Write-Hello -Name 'RTPSUG', $env:USERNAME, 'John Doe'
 ## Why do WRITE-HOST, WRITE-OUTPUT, always display and how are they different?
 
 # Using PowerShell's documentation
+## ...you can display it by changing the value of the $VerbosePreference variable or using the Verbose common parameter in any command.
 Get-Help Write-Verbose -Online
+
+## ...The common parameters are also available on advanced functions that use the CmdletBinding attribute or the Parameter attribute
 Get-Help about_CommonParameters -ShowWindow

@@ -1,7 +1,7 @@
 return 'This file is for interactive demo purposes and should not be executed as a script'
 
 
-Get-Help about_Functions_Advanced -Online
+Get-Help about_functions_cmdletbindingattribute -ShowWindow
 
 # From 'Hello' to 'AdvancedHello'
 function Write-AdvancedHello {
@@ -29,6 +29,7 @@ function Write-AdvancedHello {
     }
 }
 
+
 ## Testing our new 'Advanced Function'
 Write-AdvancedHello
 
@@ -36,18 +37,26 @@ Write-AdvancedHello -Verbose
 
 Write-AdvancedHello -Debug -InformationAction 'Continue'
 
+## Tab-completion of function
+Write-Hello -
+
+## Tab-complettion of advanced function
+Write-AdvancedHello -
+
+#>>> If you take nothing else away from this session. Use "[CmdletBinding()]". Always <<<
+
 ## Output to the different streams an now be controlled!
 
 
 # Best Hello Function yet...
-## Borrows from ISE's "Cmdlet (Advanced Function)" template
+## Borrows from ISE's "Cmdlet (Advanced Function)" template. A better, real-world example.
 function Write-AdvancedHello2 {
     [CmdletBinding()]
-    [Alias('wah')]              #<--- New: allows you to use command 'wah' instead of 'Write-AdvancedHello2'
+    [Alias('wah2')]             #<--- New: allows you to use command 'wah' instead of 'Write-AdvancedHello2'
     [OutputType([string])]      #<--- New: Declares function outputs a string
 
     Param (
-        [Parameter(ValueFromPipeline = $true, #<--- New: Allows "'Name' | Write-AdvancedHello2"
+        [Parameter(ValueFromPipeline = $true,        #<--- New: Allows "'Name' | Write-AdvancedHello2"
             ValueFromPipelineByPropertyName = $true, #<--- New: Allows "Get-Service | Write-AdvancedHello2"
             Position = 0)]
         [string[]]
@@ -102,16 +111,16 @@ function Write-AdvancedHello2 {
 Write-AdvancedHello2
 
 ## Having fun with "ValueFromPipeline" and "Alias"
-'Test1', 'Test2', 'Test3' | wah
+'Test1', 'Test2', 'Test3' | wah2
 
 ## Having fun with "ValueFromPipelineByPropertyName" and "Alias"
-Get-Service | wah
+Get-Service | wah2
 
 ## Is Write-Progress working?
-wah (Get-Service) -Debug
+wah2 -Name (Get-Service | Select-Object -ExpandProperty Name) -Debug
 
 ## Let's see what the Verbose messages look like
-'Test1', 'Test2', 'Test3' | wah -Verbose
+'Test1', 'Test2', 'Test3' | wah2 -Verbose
 
 ## This is great! Still have some questions.
 ## Why do Error, and Warning show automatically, but not Verbose and Information?

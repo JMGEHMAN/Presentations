@@ -1,10 +1,11 @@
 #This advanced function shows how simply adding '[CmdletBinding()]' to a script or function
 #opens up a lot of new possibilities
 
-[CmdletBinding()]
+[CmdletBinding()]           #<--- changing the world one-liner at a time
 
-Param (
-    [string[]]$Name = $env:USERNAME
+Param (                     #<--- CmdletBinding requires a 'Param block'
+    [string[]]
+    $Name = $env:USERNAME
 )
 
 foreach ($item in $Name) {

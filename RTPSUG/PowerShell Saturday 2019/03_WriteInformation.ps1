@@ -5,6 +5,7 @@ return 'This file is for interactive demo purposes and should not be executed as
 ## What can it do for us?
 
 ## Finally, online redirection works
+## ...The information stream does not follow the standard convention of prefixing its messages with "[Stream Name]:". This was intended for brevity and visual cleanliness.
 Get-Help Write-Information -Online
 
 ## Testing Information action
@@ -18,7 +19,7 @@ Write-Information -MessageData 'Test informational message' -InformationAction '
 Write-Information -MessageData 'Test informational message' -InformationAction 'Stop' -Tags 'Stop'
 
 ## Testing tags to variable
-Write-Information -MessageData "Test informational $InformationPreference message (Default)." -Tags 'Default' -InformationVariable infoDefaultMessage
+Write-Information -MessageData "Test informational $InformationPreference message (Default)" -Tags 'Default' -InformationVariable infoDefaultMessage
 Write-Information -MessageData "Test informational $InformationPreference message (Continue)" -InformationAction 'Continue' -Tags 'Continue' -InformationVariable infoContinueMessage
 Write-Information -MessageData "Test informational $InformationPreference message (Stop)" -InformationAction 'Stop' -Tags 'Stop' -InformationVariable infoStopMessage
 
@@ -57,6 +58,8 @@ function Write-AdvancedHello3 {
         Write-Verbose -Message "Welcoming $($Name.Count) names"
 
         foreach ($item in $Name) {
+            Write-Host -ForegroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) -BackgroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) "Write-Host: I'm as chill as a cat with a lazer pointer"
+
             #Only show progress bar for larger, time consuming tasks
             if ($name.count -gt 5) {
                 $i += 1
@@ -88,6 +91,7 @@ function Write-AdvancedHello3 {
         Write-Verbose -Message 'Show is over - clean up the popcorn'
     }
 }
+
 
 #Saving informational output to a variable
 Write-AdvancedHello3 -Name 'Name 1', 'Name 2', 'PSSaturday', 'PSSaturday2' -InformationVariable wah3Info
