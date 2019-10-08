@@ -58,6 +58,7 @@ function Write-AdvancedHello3 {
         Write-Verbose -Message "Welcoming $($Name.Count) names"
 
         foreach ($item in $Name) {
+            #Adding 'Write-Host' for a splash of color, which is the reason everyone uses it, and to demonstrate how it compares to usage of 'Write-Information'
             Write-Host -ForegroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) -BackgroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) "Write-Host: I'm as chill as a cat with a lazer pointer"
 
             #Only show progress bar for larger, time consuming tasks
@@ -96,12 +97,13 @@ function Write-AdvancedHello3 {
 #Saving informational output to a variable
 Write-AdvancedHello3 -Name 'Name 1', 'Name 2', 'PSSaturday', 'PSSaturday2' -InformationVariable wah3Info
 
-#reviewing the contents of informational output
+#reviewing the contents of informational output (Notice 'Write-Host' messages are included)
 $wah3Info
 
 #But wait - there's more information under the surface
 $wah3Info | Select-Object * | Format-Table
 
+#Filtering Informational messages based on the tags (can't do this with Write-Host)
 $wah3Info | Where-Object Tags -contains 'Example'
 $wah3Info | Where-Object Tags -contains 'Begin'
 $wah3Info | Where-Object Tags -contains 'Process'

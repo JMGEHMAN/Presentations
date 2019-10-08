@@ -23,6 +23,7 @@ process {
     Write-Verbose -Message "Welcoming $($Name.Count) names"
 
     foreach ($item in $Name) {
+        #Adding 'Write-Host' for a splash of color, which is the reason everyone uses it, and to demonstrate how it compares to usage of 'Write-Information'
         Write-Host -ForegroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) -BackgroundColor ([enum]::GetValues([System.ConsoleColor]) | Get-Random) "Write-Host: I'm as chill as a cat with a lazer pointer"
 
         #Only show progress bar for larger, time consuming tasks
